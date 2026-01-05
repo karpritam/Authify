@@ -5,31 +5,21 @@ Authify is a full-stack authentication system built using Spring Boot and React,
 # Tech Stack
 Backend
 
-Java 21+
-
-Spring Boot
-
-Spring Security
-
-JWT (JSON Web Tokens)
-
-JavaMail Sender
-
-RESTful APIs
-
-MySQL 
+1. Java 21+
+2. Spring Boot
+3. Spring Security
+4. JWT (JSON Web Tokens)
+5. JavaMail Sender
+6. RESTful APIs
+7. MySQL(database) 
 
 Frontend
 
-React (Vite)
-
-JavaScript
-
-Tailwind CSS
-
-Axios
-
-React Router DOM
+1. React (Vite)
+2. JavaScript
+3. Tailwind CSS
+4. Axios
+5. React Router DOM
 
 # Features
 
@@ -49,7 +39,7 @@ Frontend Setup (React + Vite)
 1. npm create vite
 2. npm run dev
 
-for Styling use Tailwind CSS
+CSS Styling using Tailwind CSS
 1. npm install -D tailwindcss@3 postcss autoprefixer
 2. npx tailwindcss init -p
 
