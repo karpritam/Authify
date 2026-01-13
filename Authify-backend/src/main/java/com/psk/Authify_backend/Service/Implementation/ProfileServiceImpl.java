@@ -7,6 +7,7 @@ import com.psk.Authify_backend.io.ProfileRequest;
 import com.psk.Authify_backend.io.ProfileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,16 +18,20 @@ import java.util.UUID;
 public class ProfileServiceImpl implements ProfileService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public ProfileResponse createProfile(ProfileRequest request) {
-        UserEntity newProfile=convertToUserEntity(request);
-        if(!userRepository.existsByEmail(request.getEmail())){
-            newProfile=userRepository.save(newProfile);
-            return convertToProfileResponse(newProfile);
-        }
-        throw new ResponseStatusException(HttpStatus.CONFLICT,"Email already exists");
 
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Email already exists"
+            );
+        }
+
+        UserEntity user = convertToUserEntity(request);
+        user = userRepository.save(user);
+        return convertToProfileResponse(user);
     }
 
     private ProfileResponse convertToProfileResponse(UserEntity newProfile) {
@@ -43,7 +48,7 @@ public class ProfileServiceImpl implements ProfileService {
                 .email(request.getEmail())
                 .userId(UUID.randomUUID().toString())
                 .name(request.getName())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .isAccountVerified(false)
                 .resetOtpExpireAt(0L)
                 .verifyOtp(null)

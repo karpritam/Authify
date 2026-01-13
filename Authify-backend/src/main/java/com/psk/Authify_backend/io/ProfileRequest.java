@@ -14,7 +14,6 @@ public class ProfileRequest {
 
     @NotBlank(message = "Name should be not empty")
     private String name;
-    private String userId;
     @Email(message = "Enter valid email address")
     @NotNull(message = "Email should be not empty")
     private String email;
