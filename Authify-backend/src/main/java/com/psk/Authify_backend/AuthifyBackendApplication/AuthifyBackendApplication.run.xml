@@ -1,5 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AuthifyBackendApplication" type="Application" factoryName="Application">
+    <envs>
+      <env name="brevo_username" value="a04d18001@smtp-brevo.com" />
+      <env name="brevo_master_password" value="bskZV0Hy9aHxF5W" />
+      <env name="my_email_id" value="karpritam194@gmail.com" />
+    </envs>
     <option name="MAIN_CLASS_NAME" value="com.psk.Authify_backend.AuthifyBackendApplication" />
     <module name="Authify-backend" />
     <method v="2">
