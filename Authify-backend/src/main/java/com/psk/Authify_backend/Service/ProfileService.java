@@ -6,4 +6,5 @@ import com.psk.Authify_backend.io.ProfileResponse;
 public interface ProfileService {
 
     ProfileResponse createProfile(ProfileRequest request);
+    ProfileResponse getProfile(String email);
 }

@@ -7,6 +7,7 @@ import com.psk.Authify_backend.io.ProfileRequest;
 import com.psk.Authify_backend.io.ProfileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,6 +33,14 @@ public class ProfileServiceImpl implements ProfileService {
         UserEntity user = convertToUserEntity(request);
         user = userRepository.save(user);
         return convertToProfileResponse(user);
+    }
+
+    @Override
+    public ProfileResponse getProfile(String email) {
+        UserEntity existingUser=userRepository.findByEmail(email)
+                .orElseThrow(()->new UsernameNotFoundException("User not found: "+email));
+
+        return convertToProfileResponse(existingUser);
     }
 
     private ProfileResponse convertToProfileResponse(UserEntity newProfile) {

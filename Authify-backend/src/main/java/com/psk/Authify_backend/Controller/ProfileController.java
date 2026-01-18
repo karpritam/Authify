@@ -33,6 +33,6 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public ProfileResponse getProfile(@CurrentSecurityContext(expression = "authentication?.name") String email){
-        //todo
+        return profileService.getProfile(email);
     }
 }
