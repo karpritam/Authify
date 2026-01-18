@@ -1,11 +1,10 @@
-package com.psk.Authify_backend.Service;
+package com.psk.Authify_backend.Service.Implementation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.scanner.ScannerImpl;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +20,15 @@ public class EmailService {
         message.setTo(toEmail);
         message.setSubject("Welcome to Our platform");
         message.setText("Hello "+name+",\n\n Thanks for registering with us!\n\nRegards, \nAuthify Team");
+        mailSender.send(message);
+    }
+
+    public void sendResetOtpEmail(String toEmail,String otp){
+        SimpleMailMessage message=new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(toEmail);
+        message.setSubject("Password Reset OTP");
+        message.setText("Your otp for resetting your password is: "+otp+". Use this otp to proceed with resetting your password");
         mailSender.send(message);
     }
 }

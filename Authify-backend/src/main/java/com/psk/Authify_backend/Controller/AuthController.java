@@ -1,6 +1,7 @@
 package com.psk.Authify_backend.Controller;
 
 import com.psk.Authify_backend.Service.Implementation.AppUserDetailsService;
+import com.psk.Authify_backend.Service.ProfileService;
 import com.psk.Authify_backend.Util.JwtUtil;
 import com.psk.Authify_backend.io.AuthRequest;
 import com.psk.Authify_backend.io.AuthResponse;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -32,6 +35,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final AppUserDetailsService appUserDetailsService;
     private final JwtUtil jwtUtil;
+    private final ProfileService profileService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request){
@@ -70,8 +74,19 @@ public class AuthController {
     }
 
     @GetMapping("/is-authenticated")
-    public ResponseEntity<Boolean> isAuthenticated(@CurrentSecurityContext(expression = "authentication?.name") String email){
-        return ResponseEntity.ok(email!=null);
+    public ResponseEntity<?> isAuthenticated(@CurrentSecurityContext(expression = "authentication?.name") String email){
+        return ResponseEntity.ok(
+                Map.of("authenticated", email != null, "email", email)
+        );
+    }
+
+    @PostMapping("/send-reset-otp")
+    public void sendResetOtp(@RequestParam String email){
+        try{
+            profileService.sendResetOtp(email);
+        }catch (Exception ex){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        }
     }
 
 }
