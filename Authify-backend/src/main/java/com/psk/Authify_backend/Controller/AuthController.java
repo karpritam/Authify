@@ -5,8 +5,11 @@ import com.psk.Authify_backend.Service.ProfileService;
 import com.psk.Authify_backend.Util.JwtUtil;
 import com.psk.Authify_backend.io.AuthRequest;
 import com.psk.Authify_backend.io.AuthResponse;
+import com.psk.Authify_backend.io.ResetPasswordRequest;
 import io.jsonwebtoken.Jwt;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -18,17 +21,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -81,12 +81,15 @@ public class AuthController {
     }
 
     @PostMapping("/send-reset-otp")
-    public void sendResetOtp(@RequestParam String email){
-        try{
-            profileService.sendResetOtp(email);
-        }catch (Exception ex){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-        }
+    public ResponseEntity<?> sendResetOtp(@RequestParam String email) {
+        profileService.sendResetOtp(email);
+        return ResponseEntity.ok(Map.of("success", true, "message", "OTP sent to email"));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        profileService.resetPassword(request.getEmail(), request.getOtp(), request.getNewPassword());
+        return ResponseEntity.ok(Map.of("success", true, "message", "Password reset successfully"));
     }
 
 }

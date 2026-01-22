@@ -19,7 +19,7 @@ public class EmailService {
         message.setFrom(fromEmail);
         message.setTo(toEmail);
         message.setSubject("Welcome to Our platform");
-        message.setText("Hello "+name+",\n\n Thanks for registering with us!\n\nRegards, \nAuthify Team");
+        message.setText("Hello "+name+",\n\n Thanks for registering with us!\n\nRegards, \nAuthify ");
         mailSender.send(message);
     }
 
@@ -28,7 +28,7 @@ public class EmailService {
         message.setFrom(fromEmail);
         message.setTo(toEmail);
         message.setSubject("Password Reset OTP");
-        message.setText("Your otp for resetting your password is: "+otp+". Use this otp to proceed with resetting your password");
+        message.setText("Your otp for resetting your password is: "+otp+". Use this otp to proceed with resetting your password \nOTP is valid only 5min.");
         mailSender.send(message);
     }
 }
