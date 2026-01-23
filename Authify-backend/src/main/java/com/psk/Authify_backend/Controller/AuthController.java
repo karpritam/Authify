@@ -92,4 +92,30 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("success", true, "message", "Password reset successfully"));
     }
 
+    @PostMapping("/send-otp")
+    public ResponseEntity<?> sendVerifyOtp(
+            @CurrentSecurityContext(expression = "authentication?.name") String email
+    ) {
+        if (email == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("success", false, "message", "Unauthorized"));
+        }
+
+        profileService.sendOtp(email);
+        return ResponseEntity.ok(Map.of("success", true, "message", "OTP sent successfully"));
+    }
+
+    @PostMapping("/verify-otp")
+    public void verifyByEmail(@RequestBody Map<String, Object> request,
+                              @CurrentSecurityContext(expression = "authentication?.name") String email) {
+
+        if (!request.containsKey("otp") || request.get("otp") == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing OTP");
+        }
+
+        String otp = request.get("otp").toString().trim();
+
+        profileService.verifyOtp(email, otp);
+    }
+
 }
