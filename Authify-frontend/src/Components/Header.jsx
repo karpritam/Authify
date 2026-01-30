@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { assets } from "../assets/assets";
 import { motion } from "framer-motion";
+import { AppContext } from "../Context/AppContext";
 
 const Header = () => {
+	const { userData } = useContext(AppContext);
 	return (
 		<div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4">
 			<motion.img
@@ -14,13 +16,13 @@ const Header = () => {
 				transition={{ duration: 0.6 }}
 			/>
 
-			<motion.h5
-				className="text-gray-500 text-sm mb-2"
+			<motion.h3
+				className="text-gray-500 text-mb mb-2"
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 0.1 }}>
-				Hey Developer 👋
-			</motion.h5>
+				Hey {userData ? userData.name : "Developer"} 👋
+			</motion.h3>
 
 			<motion.h1
 				className="text-4xl md:text-5xl font-bold mb-4"
