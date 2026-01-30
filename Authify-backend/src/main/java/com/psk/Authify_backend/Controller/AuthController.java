@@ -7,6 +7,7 @@ import com.psk.Authify_backend.io.AuthRequest;
 import com.psk.Authify_backend.io.AuthResponse;
 import com.psk.Authify_backend.io.ResetPasswordRequest;
 import io.jsonwebtoken.Jwt;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -116,6 +117,21 @@ public class AuthController {
         String otp = request.get("otp").toString().trim();
 
         profileService.verifyOtp(email, otp);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response){
+        ResponseCookie cookie=ResponseCookie.from("jwt","")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE,cookie.toString())
+                .body("Logged out successfully");
     }
 
 }
