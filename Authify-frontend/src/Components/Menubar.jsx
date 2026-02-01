@@ -3,7 +3,6 @@ import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../Context/AppContext";
 import axios from "axios";
-import { nav } from "framer-motion/client";
 import { toast } from "react-toastify";
 
 const Menubar = () => {
@@ -40,6 +39,21 @@ const Menubar = () => {
 		}
 	};
 
+	const sendVerificationOtp = async () => {
+		try {
+			axios.defaults.withCredentials = true;
+			const response = await axios.post(backendURL + "/send-otp");
+			if (response.status === 200) {
+				navigate("/email-verify");
+				toast.success("OTP has been sent successfully.");
+			} else {
+				toast.error("Unable to send OTP!");
+			}
+		} catch (error) {
+			toast.error(error.response.data.message);
+		}
+	};
+
 	return (
 		<nav className="bg-white px-6 py-4 flex justify-between items-center shadow-md">
 			{/* Logo */}
@@ -64,7 +78,9 @@ const Menubar = () => {
 					{dropdownOpen && (
 						<div className="absolute right-0 mt-3 w-40 bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden z-50">
 							{!userData.isAccountVerified && (
-								<button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition">
+								<button
+									onClick={sendVerificationOtp}
+									className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition">
 									Verify Email
 								</button>
 							)}

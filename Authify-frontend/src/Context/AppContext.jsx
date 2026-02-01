@@ -1,14 +1,17 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { AppConstants } from "../Util/constants";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+axios.defaults.withCredentials = true;
+
 export const AppContext = createContext();
 
-export const AppContextProvider = (props) => {
+export const AppContextProvider = ({ children }) => {
 	const backendURL = AppConstants.BACKEND_URL;
-	const [isLoggesIn, setIsLoggedIn] = useState(false);
-	const [userData, setUserData] = useState(false);
+
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [userData, setUserData] = useState(null);
 
 	const getUserData = async () => {
 		try {
@@ -23,17 +26,38 @@ export const AppContextProvider = (props) => {
 		}
 	};
 
+	const getAuthState = async () => {
+		try {
+			const response = await axios.get(backendURL + "/is-authenticated");
+
+			if (response.status === 200 && response.data) {
+				setIsLoggedIn(true);
+				await getUserData();
+			} else {
+				setIsLoggedIn(false);
+				setUserData(null);
+			}
+		} catch (error) {
+			setIsLoggedIn(false);
+			setUserData(null);
+		}
+	};
+
+	useEffect(() => {
+		getAuthState();
+	}, []);
+
 	const contextValue = {
 		backendURL,
-		isLoggesIn,
+		isLoggedIn,
 		setIsLoggedIn,
 		userData,
 		setUserData,
 		getUserData,
+		getAuthState,
 	};
+
 	return (
-		<AppContext.Provider value={contextValue}>
-			{props.children}
-		</AppContext.Provider>
+		<AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
 	);
 };

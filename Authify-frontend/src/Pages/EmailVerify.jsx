@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { assets } from "../assets/assets";
 import { AppContext } from "../Context/AppContext";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const OTP_LENGTH = 6;
 const RESEND_TIME = 300; //5min
@@ -13,7 +15,7 @@ const EmailVerify = () => {
 	const [loading, setLoading] = useState(false);
 	const [timer, setTimer] = useState(RESEND_TIME);
 
-	const { getUserData } = useContext(AppContext);
+	const { getUserData,backendURL } = useContext(AppContext);
 	const navigate = useNavigate();
 
 	/* -------------------- Auto Timer -------------------- */
@@ -26,42 +28,53 @@ const EmailVerify = () => {
 	/* -------------------- Input Change -------------------- */
 	const handleChange = (e, index) => {
 		const value = e.target.value.replace(/\D/, "");
-		if (!value) return;
+		e.target.value = value;
 
-		const newOtp = [...otp];
-		newOtp[index] = value;
-		setOtp(newOtp);
-
-		if (index < OTP_LENGTH - 1) {
+		if (value && index < 5) {
 			inputRef.current[index + 1]?.focus();
 		}
 	};
 
 	/* -------------------- Backspace Handling -------------------- */
 	const handleKeyDown = (e, index) => {
-		if (e.key === "Backspace") {
-			const newOtp = [...otp];
-			if (otp[index]) {
-				newOtp[index] = "";
-				setOtp(newOtp);
-			} else if (index > 0) {
-				inputRef.current[index - 1]?.focus();
-			}
+		if (e.key === "Backspace" && !e.target.value && index > 0) {
+			inputRef.current[index - 1]?.focus();
 		}
+	};
+
+	const handlePaste = (e) => {
+		e.preventDefault(); //stop loading entire page
+		const paste = e.clipboardData.getData("text").slice(0, 6).split("");
+		paste.forEach((digit, i) => {
+			if (inputRef.current[i]) {
+				inputRef.current[i].value = digit;
+			}
+		});
+		const next = paste.length < 6 ? paste.length : 5;
+		inputRef.current[next].focus();
 	};
 
 	/* -------------------- Verify OTP -------------------- */
 	const handleVerify = async () => {
-		const finalOtp = otp.join("");
-		if (finalOtp.length < OTP_LENGTH) return;
+		const otp=inputRef.current.map(input=>input.value).join("");
+		if(otp.length!=6){
+			toast.error("Please enter all 6 digits of the OTP.");
+			return;
+		}
 
 		setLoading(true);
-		try {
-			// API call here
-			await new Promise((res) => setTimeout(res, 1500));
-			getUserData();
-			navigate("/");
-		} finally {
+		try{
+			const response=await axios.post(backendURL+"/verify-otp",{otp});
+			if(response.status===200){
+				toast.success("OTP verified successfully");
+				getUserData();
+				navigate("/");
+			}else{
+				toast.error("Invalid OTP.")
+			}
+		}catch(error){
+			toast.error("Failed to verify OTP. Please try again");
+		}finally{
 			setLoading(false);
 		}
 	};
@@ -110,9 +123,9 @@ const EmailVerify = () => {
 						<input
 							key={i}
 							ref={(el) => (inputRef.current[i] = el)}
-							value={value}
 							onChange={(e) => handleChange(e, i)}
 							onKeyDown={(e) => handleKeyDown(e, i)}
+							onPaste={handlePaste}
 							maxLength={1}
 							type="text"
 							className="h-12 w-12 rounded-lg border border-white/30 bg-transparent text-center text-xl text-white outline-none focus:border-white"
