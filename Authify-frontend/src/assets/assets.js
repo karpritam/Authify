@@ -5,7 +5,7 @@ import profile from "./profile.png";
 
 export const assets = {
 	logo,
-    header,
-    mark,
-    profile,
+	header,
+	mark,
+	profile,
 };
