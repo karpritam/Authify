@@ -55,7 +55,7 @@ const Menubar = () => {
 	};
 
 	return (
-		<nav className="bg-white px-6 py-4 flex justify-between items-center shadow-md">
+		<nav className="bg-yellow-400 px-6 py-4 flex justify-between items-center shadow-md">
 			{/* Logo */}
 			<div
 				className="flex items-center gap-2 cursor-pointer"
